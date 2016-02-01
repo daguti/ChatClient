@@ -12,7 +12,6 @@ import java.awt.Image;
 import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -43,6 +42,11 @@ public class UserList extends javax.swing.JFrame {
   }
   public UserList(String[] userList, String user) throws RemoteException {
     initComponents();
+      try {
+          this.setIconImage(ImageIO.read(StaticData.framIcon));
+      } catch (IOException ex) {
+          Logger.getLogger(UserList.class.getName()).log(Level.SEVERE, null, ex);
+      }
     userPane.setText(user);
     setTitle("iChat V1.0");
     this.setLocationRelativeTo(null);

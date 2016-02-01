@@ -10,7 +10,12 @@ import chat.remote.interfaces.ClientRemoteItfz;
 import chat.remote.interfaces.ServerRemoteItfz;
 import chatclient.GUI.ChatWindow;
 import chatclient.GUI.UserList;
+import chatclient.threads.AudioCapturer;
+import chatclient.threads.AudioPlayer;
+import java.io.File;
 import java.util.HashMap;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
 
 /**
  *
@@ -23,4 +28,12 @@ public class StaticData {
   public static HashMap<String,ChatWindow> chatWindowsMap;
   public static String userName;
   public static UserList guiList;
+  public static File framIcon;
+  public static String errStr;
+  public static AudioInputStream audioInputStream;
+  public static Double duration;
+  public static int recPlay = 1; // 1 --> start recording / 2--> finish recording
+  public static AudioCapturer capturer;
+  public static AudioPlayer player;
+  public static AudioFormat audioFormat;
 }

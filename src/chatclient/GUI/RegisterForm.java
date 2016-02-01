@@ -9,7 +9,11 @@ package chatclient.GUI;
 import chatclient.StaticData;
 import java.awt.Color;
 import java.awt.Cursor;
+import java.io.IOException;
 import java.rmi.RemoteException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
 
 /**
@@ -23,6 +27,11 @@ public class RegisterForm extends javax.swing.JFrame {
    */
   public RegisterForm() {
     initComponents();
+      try {
+          this.setIconImage(ImageIO.read(StaticData.framIcon));
+      } catch (IOException ex) {
+          Logger.getLogger(RegisterForm.class.getName()).log(Level.SEVERE, null, ex);
+      }
     this.setLocationRelativeTo(null);
   }
 

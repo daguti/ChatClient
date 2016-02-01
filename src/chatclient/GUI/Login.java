@@ -10,14 +10,19 @@ import chat.remote.interfaces.ClientRemoteItfz;
 import chat.remote.interfaces.ServerRemoteItfz;
 import chatclient.StaticData;
 import chatclient.remote.ClientRemote;
+import chatclient.threads.audio.utils.AudioUtils;
 import java.awt.Color;
 import java.awt.Cursor;
+import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.imageio.ImageIO;
+import javax.sound.sampled.TargetDataLine;
 import javax.swing.JOptionPane;
 
 /**
@@ -38,12 +43,17 @@ public class Login extends javax.swing.JFrame {
       try {
           //Registry registry = LocateRegistry.getRegistry("10.100.167.254");
           //StaticData.server = (ServerRemoteItfz) registry.lookup("ChatServer");
+          StaticData.framIcon = new File(this.getClass().getClassLoader().getResource("chatclient/GUI/img/chat-2-icon.png").getFile());
+          this.setIconImage(ImageIO.read(StaticData.framIcon));
           StaticData.server = (ServerRemoteItfz) Naming.lookup("rmi://localhost:1099/ChatServer");
+          AudioUtils.getSupportedFormats(TargetDataLine.class);
       } catch (NotBoundException ex) {
           Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
       } catch (RemoteException ex) {
           Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
       } catch (MalformedURLException ex) {
+          Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+      } catch (IOException ex) {
           Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
       }
   }
@@ -273,6 +283,8 @@ public class Login extends javax.swing.JFrame {
       }
     });
   }
+  
+  
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
