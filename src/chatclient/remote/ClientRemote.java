@@ -89,7 +89,7 @@ public class ClientRemote extends UnicastRemoteObject implements ClientRemoteItf
     }
 
     @Override
-    public void getAudioClip(String userFrom, byte[] bytes) {
+    public void getAudioClip(String userFrom, byte[] bytes) throws RemoteException {
         //Variable definition
         ChatWindow win             = StaticData.chatWindowsMap.get(userFrom);
         ByteArrayInputStream baiut = new ByteArrayInputStream(bytes);
