@@ -7,7 +7,7 @@
 package chatclient.GUI;
 
 import chatclient.StaticData;
-import chatclient.threads.SendProfileImageThread;
+import chatclient.threads.send.SendProfileImageThread;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.event.MouseAdapter;

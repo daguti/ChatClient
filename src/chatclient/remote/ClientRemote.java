@@ -17,6 +17,9 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.text.StyledDocument;
 
 /**
@@ -83,5 +86,27 @@ public class ClientRemote extends UnicastRemoteObject implements ClientRemoteItf
         } else {
             win.addProfileImage(bytes);
         }
+    }
+
+    @Override
+    public void getAudioClip(String userFrom, byte[] bytes) {
+        //Variable definition
+        ChatWindow win             = StaticData.chatWindowsMap.get(userFrom);
+        ByteArrayInputStream baiut = new ByteArrayInputStream(bytes);
+        AudioInputStream stream    = null;
+        
+        try {
+            stream = AudioSystem.getAudioInputStream(baiut);
+        } catch (UnsupportedAudioFileException ex) {
+            Logger.getLogger(ClientRemote.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(ClientRemote.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        if(win == null){
+            createChatWindow(userFrom);
+            win = StaticData.chatWindowsMap.get(userFrom);
+        }
+        StaticData.audioInputStream = stream;
+        win.setAudioClipOnMessages(userFrom);
     }
 }

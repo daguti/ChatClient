@@ -7,11 +7,14 @@
 package chatclient.GUI;
 
 import chatclient.StaticData;
+import chatclient.audio.utils.AudioUtils;
 import chatclient.emoticons.Emoji;
 import chatclient.emoticons.EmojiIcons;
 import chatclient.emoticons.GifImageSolver;
-import chatclient.threads.AudioCapturer;
-import chatclient.threads.SendThread;
+import chatclient.threads.audio.AudioCapturer;
+import chatclient.threads.audio.AudioPlayer;
+import chatclient.threads.audio.AudioSender;
+import chatclient.threads.send.SendThread;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontFormatException;
@@ -27,11 +30,14 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.rmi.RemoteException;
+import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
+import javax.sound.sampled.AudioInputStream;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -61,7 +67,14 @@ public class ChatWindow extends javax.swing.JFrame {
   private Font emojiFont;
   private static final String ELEM = AbstractDocument.ElementNameAttribute;
   private static final String ICON = StyleConstants.IconElementName;
-  
+  public static HashMap<Integer, AudioInputStream> clipMap = new HashMap<>();
+  public static int audioClipId = 1;
+  private ImageIcon playIcon = null;
+  private ImageIcon stopIcon = null;
+  private ImageIcon recIcon  = null;
+  private boolean recStop  = false; // 1 --> start recording / 2--> finish recording
+  private boolean playStop = false; // 1 --> start recording / 2--> finish recording
+  private AudioPlayer player;
   /**
    * Creates new form ChatWindow
    * @param userTo
@@ -398,28 +411,118 @@ public class ChatWindow extends javax.swing.JFrame {
         //Variable definition
         String iconToLoad;
         File file;
+        AudioSender sender;
+        Thread th;
         
-        if(StaticData.recPlay == 1) iconToLoad = "stop.png";
-        else iconToLoad = "rec_icon.png";
-        
-        file = new File(this.getClass().getClassLoader().getResource("chatclient/GUI/img/" + iconToLoad).getFile());
-        
-        if(StaticData.recPlay == 1) {
+        if(!recStop) {
+            if(stopIcon!= null) {
+                recButton.setIcon(stopIcon);
+                recStop = true;
+            }
             StaticData.capturer = new AudioCapturer();
             StaticData.capturer.start();
-            StaticData.recPlay = 2;
+            iconToLoad = "stop.png";
         } else {
+            if(recIcon!= null) {
+                recButton.setIcon(recIcon);
+                recStop = false;
+            }
             StaticData.capturer.stop();
-            StaticData.recPlay = 1;
+            while(StaticData.audioInputStream == null) {
+                try {
+                    Thread.sleep(200);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(ChatWindow.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+            setAudioClipOnMessages(StaticData.userName);
+            iconToLoad = "rec_icon.png";
+ 
+            sender = new AudioSender(clipMap.get(audioClipId - 1), StaticData.server,
+                                     StaticData.userName, StaticData.usersMap.get(userTo));
+            th = new Thread(sender);
+            th.start();        
         }
         
         try {
-            recButton.setIcon(new ImageIcon(ImageIO.read(file)));
+            if(recIcon == null || stopIcon == null) {
+                file = new File(this.getClass().getClassLoader().getResource("chatclient/GUI/img/" + iconToLoad).getFile());
+                if(!recStop) {
+                    stopIcon = new ImageIcon(ImageIO.read(file));
+                    recButton.setIcon(stopIcon);
+                    recStop = true;
+                } else {
+                    recIcon = new ImageIcon(ImageIO.read(file));
+                    recButton.setIcon(recIcon);
+                    recStop = false;
+                }
+            }
         }catch(Exception ex) {
             Logger.getLogger(ChatWindow.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
     }//GEN-LAST:event_recButtonMouseClicked
 
+  public void setAudioClipOnMessages(String user) {
+    //Variable definition
+    JPanel panel   = new JPanel();
+    JButton button = new JButton();
+    JLabel label   = new JLabel();
+    clipMap.put(audioClipId, StaticData.audioInputStream);
+    try {
+        if(playIcon == null) {
+            File file = new File(this.getClass().getClassLoader().getResource("chatclient/GUI/img/playIcon.png").getFile());
+            playIcon = new ImageIcon(ImageIO.read(file));
+            if(stopIcon == null) {
+                file = new File(this.getClass().getClassLoader().getResource("chatclient/GUI/img/stop.png").getFile());
+                stopIcon = new ImageIcon(ImageIO.read(file));
+            }
+
+        }
+        button.setIcon(playIcon);
+        addSoundButtonListener(button);
+        label.setText(audioClipId + "-Audio Clip.");
+        panel.add(button);
+        panel.add(label);
+    
+        StyledDocument styleDocument = allMessages.getStyledDocument();
+        Style primaryStyle           = getPrimaryStyle(styleDocument);
+        Style secondaryStyle         = getSecondaryStyle(styleDocument, primaryStyle);
+        StyleContext context         = new StyleContext();
+        Style labelStyle             = context.getStyle(StyleContext.DEFAULT_STYLE);
+
+        StyleConstants.setComponent(labelStyle, panel);
+        styleDocument.insertString(styleDocument.getLength(), user + ": \n", primaryStyle);
+        styleDocument.insertString(styleDocument.getLength(), "Ignored", labelStyle);
+        styleDocument.insertString(styleDocument.getLength(),"\n", secondaryStyle);
+        
+      } catch (IOException ex) {
+            Logger.getLogger(ChatWindow.class.getName()).log(Level.SEVERE, null, ex);
+      } catch (BadLocationException ex) {
+          Logger.getLogger(ChatWindow.class.getName()).log(Level.SEVERE, null, ex);
+      }
+    audioClipId++;
+  }
+  
+  
+  
+  private void addSoundButtonListener(JButton button) {
+      button.addMouseListener(new MouseAdapter(){
+          public void mouseClicked(MouseEvent e) {
+              if(!playStop) {
+                  button.setIcon(stopIcon);
+                  player = new AudioPlayer(clipMap.get(audioClipId));
+                  player.start();
+                  playStop = true;
+              } else {
+                  button.setIcon(playIcon);
+                  player.stop();
+                  player   = null;
+                  playStop = false;
+              }
+          }
+      });
+  }
   private void sendMessage() {
     String txt = messages.getText();
     

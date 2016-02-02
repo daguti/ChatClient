@@ -10,7 +10,7 @@ import chat.remote.interfaces.ClientRemoteItfz;
 import chat.remote.interfaces.ServerRemoteItfz;
 import chatclient.StaticData;
 import chatclient.remote.ClientRemote;
-import chatclient.threads.audio.utils.AudioUtils;
+import chatclient.audio.utils.AudioUtils;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.io.File;

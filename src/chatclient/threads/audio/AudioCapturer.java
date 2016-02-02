@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package chatclient.threads;
+package chatclient.threads.audio;
 
 import chatclient.StaticData;
 import static chatclient.StaticData.audioInputStream;

@@ -24,4 +24,5 @@ public interface ServerRemoteItfz extends Remote {
     public void sendFile(String fileName, byte[] bytes, ClientRemoteItfz cli, String userFrom) throws RemoteException;
     public void setProfileImage(String user, byte[] bytes) throws RemoteException;
     public void getProfileImage(String user, ClientRemoteItfz cli) throws RemoteException;
+    public void sendAudioClip(String user, ClientRemoteItfz cli, byte[] bytes) throws RemoteException;
 }

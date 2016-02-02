@@ -4,10 +4,9 @@
  * and open the template in the editor.
  */
 
-package chatclient.threads;
+package chatclient.threads.audio;
 
 import chatclient.StaticData;
-import static chatclient.StaticData.audioInputStream;
 import static chatclient.StaticData.errStr;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
@@ -24,7 +23,12 @@ public class AudioPlayer implements Runnable {
     SourceDataLine line;
     final int bufSize = 16384;
     Thread thread;
-
+    AudioInputStream audioInputStream;
+    
+    public AudioPlayer(AudioInputStream audioInputStream) {
+        this.audioInputStream = audioInputStream;
+    }
+    
     public void start() {
       errStr = null;
       thread = new Thread(this);

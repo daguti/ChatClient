@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package chatclient.threads;
+package chatclient.threads.send;
 
 import chatclient.StaticData;
 import java.awt.image.BufferedImage;

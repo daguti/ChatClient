@@ -4,11 +4,13 @@
  * and open the template in the editor.
  */
 
-package chatclient.threads.audio.utils;
+package chatclient.audio.utils;
 
 import chatclient.StaticData;
+import java.io.IOException;
 import java.util.Vector;
 import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.DataLine;
 import javax.sound.sampled.Mixer;
@@ -57,5 +59,5 @@ public class AudioUtils {
         }
     }
     return formats;
-}
+  }
 }
