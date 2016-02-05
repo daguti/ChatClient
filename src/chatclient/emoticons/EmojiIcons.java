@@ -6,7 +6,6 @@
 
 package chatclient.emoticons;
 
-import chatclient.StaticData;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Image;
@@ -31,20 +30,28 @@ import javax.swing.text.StyledDocument;
  *
  * @author ESa10969
  */
-public class EmojiIcons {
+public class EmojiIcons implements Runnable {
     private JTextPane emojisPane;
     private JTextPane messages;
     private String    path;
     private int       numEmojis;
+    private String    ext;
     
-    public EmojiIcons(JTextPane emojisPane, JTextPane messages, String path, int numEmojis) {
+    public EmojiIcons(JTextPane emojisPane, JTextPane messages, String path, int numEmojis, String ext) {
         this.emojisPane = emojisPane;
         this.messages   = messages;
         this.path       = path;
         this.numEmojis  = numEmojis;
+        this.ext        = ext;
     }
     
-    public void addEmojisToPanel(String ext) {
+    
+    @Override
+    public void run() {
+        addEmojisToPanel();
+    }
+    
+    public void addEmojisToPanel() {
         //Variable definition;
         JLabel emojiLab;
         InputStream in;

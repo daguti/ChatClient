@@ -76,6 +76,8 @@ public class ChatWindow extends javax.swing.JFrame {
   private boolean recStop  = false; // 1 --> start recording / 2--> finish recording
   private boolean playStop = false; // 1 --> start recording / 2--> finish recording
   private AudioPlayer player;
+  private static int gifNum   = 81;
+  private static int emojiNum = 80;
   /**
    * Creates new form ChatWindow
    * @param userTo
@@ -104,19 +106,23 @@ public class ChatWindow extends javax.swing.JFrame {
   private void addAnimalsToPane() {
       //Variable definition
       EmojiIcons icons;
+      Thread th;
       
-      icons = new EmojiIcons(animalsPane, messages, "emojis/ANIMALS/", 5);
-      icons.addEmojisToPanel("gif");
+      icons = new EmojiIcons(animalsPane, messages, "emojis/ANIMALS/", gifNum,"gif");
       emojisPane.setBackground(Color.WHITE);
+      th = new Thread(icons);
+      th.start();
   }
   
   private void addEmojisToPane() {
       //Variable definition
       EmojiIcons icons;
+      Thread th;
       
-      icons = new EmojiIcons(emojisPane, messages, "emojis/smileys/", 80);
-      icons.addEmojisToPanel("png");
+      icons = new EmojiIcons(emojisPane, messages, "emojis/smileys/", emojiNum, "png");
       emojisPane.setBackground(Color.WHITE);
+      th = new Thread(icons);
+      th.start();
   }
   private void addEmojiFont() {
     InputStream is = this.getClass().getResourceAsStream("fonts/OpenSansEmoji.ttf");

@@ -8,6 +8,7 @@ package chatclient.GUI;
 
 import chatclient.StaticData;
 import chatclient.threads.send.SendProfileImageThread;
+import java.awt.Cursor;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.event.MouseAdapter;
@@ -92,6 +93,7 @@ public class UserList extends javax.swing.JFrame {
         String userTo = (String)userTable.getModel().getValueAt(row, 0);
         
         if (me.getClickCount() == 2 && StaticData.chatWindowsMap.get(userTo) == null) {
+            setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             try {
                 StaticData.chatWindowsMap.put(userTo, new ChatWindow(userTo));
             } catch (IOException ex) {
@@ -105,10 +107,13 @@ public class UserList extends javax.swing.JFrame {
                 }
                 StaticData.chatWindowsMap.get(userTo).setVisible(true);
             });
+            setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
         } else if (StaticData.chatWindowsMap.get(userTo) != null){
+            setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             java.awt.EventQueue.invokeLater(() -> {
                 StaticData.chatWindowsMap.get(userTo).setVisible(true);
             });
+            setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
         }
       }
     });
